@@ -1,19 +1,69 @@
-#!/bin/sh
+#!/usr/bin/sh
 
-usage="\
-Moves a file in the filesystem and updates the path in TMSU
+STATUS=0
 
-Usage: $(basename $0) SRCFILE DESTFILE"
+err()
+{
+  printf "$(basename "$0"): $@\n" 1>&2
+  STATUS=1
+}
 
-if test $# -ne 2; then
-    echo "${usage}" 1>&2
-    exit 1
+usage="Usage: $(basename $0) SRCFILE(S) DEST"
+
+if ! type tmsu >/dev/null 2>/dev/null ; then
+  err "tmsu is not installed"
+
+elif [ $# -lt 2 ] ; then
+  err "too few operands given\n${usage}"
+
+elif [ $# -eq 2 ] ; then
+  if [ ! -e "$1" ] ; then
+    err "$FILE does not exist\n${usage}"
+
+  else
+    if [ -d "$2" ] ; then
+      DEST="$2/$(basename "$1")"
+    else
+      DEST="$2"
+    fi
+
+    if [ -e "$DEST" ] ; then
+      err "$DEST already exists\ndid you mean to use tmsu-fs-merge?"
+    
+    else
+      mv "$1" "$DEST" && tmsu repair --manual "$1" "$DEST"
+    
+    fi
+  fi
+
+else
+  #for last; do true; done
+  last="${@:$#}"
+  # haven't tested this on other shells
+
+  if [ ! -d "$last" ] ; then
+    err "$last is not a directory"
+
+  else
+    for FILE in "${@:1:$#-1}"
+    do
+      if [ ! -e "$FILE" ] ; then
+        err "$FILE does not exist"
+
+      else
+        DEST="${last}/$(basename "$FILE")"
+
+        if [ -e "$DEST" ] ; then
+          err "$DEST already exists\ndid you mean to use tmsu-fs-merge?"
+        
+        else
+          mv "$FILE" "$DEST" && tmsu repair --manual "$FILE" "$DEST"
+        
+        fi
+      fi
+    done
+  fi
 fi
 
-DEST=$2
-if [ -d "$2" ]; then
-    BASE=$(basename "$1")
-    DEST="$DEST/$BASE"
-fi
+exit $STATUS
 
-mv "$1" "$DEST" && tmsu repair --manual "$1" "$DEST"
