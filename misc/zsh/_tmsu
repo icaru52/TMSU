@@ -414,21 +414,21 @@ _tmsu_cmd_repair() {
 _tmsu_cmd_status() {
     _arguments -s -w ''{--directory,-d}'[do not examine directory contents (non-recursive)]' \
                      ''{--no-dereference,-P}'[never follow symbolic links]' \
-	                 '*:file:_files' \
-	&& ret=0
+                     '*:file:_files' \
+    && ret=0
 }
 
 _tmsu_cmd_tag() {
-	_arguments -s -w ''{--tags=,-t}'[apply set of tags to multiple files]:tags:_tmsu_tags_with_values' \
-	                 ''{--recursive,-r}'[apply tags recursively to contents of directories]' \
-	                 ''{--explicit,-e}'[explicitly apply tags even if they are already implied]' \
-	                 ''{--from=,-f}'[copy tags from the specified file]:source:_files' \
-	                 ''{--where=,-w}'[apply tags to files meeting the query]:query:_tmsu_query' \
-	                 ''{--create+,-c}'[create a tag without tagging any files]:source:_files' \
-	                 ''{--force,-F}'[apply tags to non-existant or non-permissioned paths]' \
+    _arguments -s -w ''{--tags=,-t}'[apply set of tags to multiple files]:tags:_tmsu_tags_with_values' \
+                     ''{--recursive,-r}'[apply tags recursively to contents of directories]' \
+                     ''{--explicit,-e}'[explicitly apply tags even if they are already implied]' \
+                     ''{--from=,-f}'[copy tags from the specified file]:source:_files' \
+                     ''{--where=,-w}'[apply tags to files meeting the query]:query:_tmsu_query' \
+                     ''{--create+,-c}'[create a tag without tagging any files]:source:_files' \
+                     ''{--force,-F}'[apply tags to non-existant or non-permissioned paths]' \
                      ''{--no-dereference,-P}'[never follow symlinks (tag link itself)]' \
-	                 '*:: :->items' \
-	&& ret=0
+                     '*:: :->items' \
+    && ret=0
 
     case $state in
         (items)
@@ -450,15 +450,15 @@ _tmsu_cmd_tag() {
 }
 
 _tmsu_cmd_tags() {
-	_arguments -s -w ''{--count,-c}'[lists the number of tags rather than their names]' \
-	                 '-1[list one tag per line]' \
-	                 ''{--explicit,-e}'[do not show implied tags]' \
+    _arguments -s -w ''{--count,-c}'[lists the number of tags rather than their names]' \
+                     '-1[list one tag per line]' \
+                     ''{--explicit,-e}'[do not show implied tags]' \
                      ''{--no-dereference,-P}'[never follow symlinks (show tags for link itself)]' \
                      ''{--value,-u}'[show tags utilising value]' \
-	                 '*:: :->items' \
-	&& ret=0
+                     '*:: :->items' \
+    && ret=0
 
-	case $state in
+    case $state in
         (items)
             if (( ${+opt_args[--value]} ))
             then
@@ -476,27 +476,27 @@ _tmsu_cmd_unmount() {
 }
 
 _tmsu_cmd_untag() {
-	_arguments -s -w ''{--all,-a}'[remove all tags]' \
-	                 ''{--tags=,-t}'[remove set of tags from multiple files]:tags:_tmsu_tags_with_values' \
-	                 ''{--recursive,-r}'[remove tags recursively from contents of directories]' \
+    _arguments -s -w ''{--all,-a}'[remove all tags]' \
+                     ''{--tags=,-t}'[remove set of tags from multiple files]:tags:_tmsu_tags_with_values' \
+                     ''{--recursive,-r}'[remove tags recursively from contents of directories]' \
                      ''{--no-dereference,-P}'[never follow symlinks (untag link itself)]' \
-	                 '*:: :->items' \
-	&& ret=0
+                     '*:: :->items' \
+    && ret=0
 
-	case $state in
-		(items)
-			if (( ${+opt_args[--tags]} || ${+opt_args[-t]} || ${+opt_args[--all]} || ${+opt_args[-a]} ))
-			then
+    case $state in
+        (items)
+            if (( ${+opt_args[--tags]} || ${+opt_args[-t]} || ${+opt_args[--all]} || ${+opt_args[-a]} ))
+            then
                 _wanted files expl 'files' _files
-			else
-				if (( CURRENT == 1 ))
-				then
-					_wanted files expl 'files' _files
-				else
-					_wanted tags expl 'tags' _tmsu_tags_with_values
-				fi
-			fi
-	esac
+            else
+                if (( CURRENT == 1 ))
+                then
+                    _wanted files expl 'files' _files
+                else
+                    _wanted tags expl 'tags' _tmsu_tags_with_values
+                fi
+            fi
+    esac
 }
 
 _tmsu_cmd_untagged() {
